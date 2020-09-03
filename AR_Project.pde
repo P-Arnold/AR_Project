@@ -1,20 +1,16 @@
-import KinectProjectorToolkit.*;
-
+import controlP5.*;
+import gab.opencv.*;
+import Jama.*;
+import java.awt.Rectangle;
 import javax.swing.JFrame;
+import KinectProjectorToolkit.*;
 import org.openkinect.freenect.*;
 import org.openkinect.freenect2.*;
 import org.openkinect.processing.*;
 import org.processing.wiki.triangulate.*;
 import processing.sound.*;
 
-import gab.opencv.*;
-import controlP5.*;
-import Jama.*;
-
-import java.awt.Rectangle;
-
 Kinect2 kinect;
-
 FFT fft;
 SoundFile musicFile;
 int bands = 64;
@@ -22,24 +18,20 @@ float[] spectrum = new float[bands];
 float[] spectrumb = new float[bands];
 boolean skipBands = false;
 int bandsToSkip = 0;
-
 PImage ir, invIr,threshIr,flipIr,rgbImg;
 float threshVal;
 OpenCV opencv;
-// Mat testMat;
 ArrayList<Contour> contours;
 ArrayList<Contour> polygons;
 ArrayList<PVector> contPoints;
-
-//Triangllll
 ArrayList triangles = new ArrayList();
-
 Rectangle conRect;
 KinectProjectorToolkit kpt;
 PVector[] depthMap;
 final int DEPTH_WIDTH = 512;
 final int DEPTH_HEIGHT = 424;
 PVector testPoint, testPointP;
+
 void setup() {
   kpt = new KinectProjectorToolkit(this, 512, 424);
   kpt.loadCalibration("calibration.txt");
@@ -58,7 +50,6 @@ void setup() {
   ir = kinect.getIrImage();
   testPoint = new PVector();
   testPointP = new PVector();
-
   fft = new FFT(this,bands);
   //"KeepItRollin.mp3"
   //"DECOY.wav"
@@ -66,10 +57,9 @@ void setup() {
   );
   musicFile.play();
   fft.input(musicFile);
-
 }
-void settings() {
 
+void settings() {
   size(1920, 1080, P2D);
   fullScreen(2);
 }
@@ -79,14 +69,11 @@ void draw() {
   depthMap = depthMapRealWorld();  
   ir = kinect.getIrImage(); //Infrared Image
   // rgbImg = kinect.getVideoImage();
- 
   flipIr = ir.copy(); //Make a copy of IR image
   mirrorImage(flipIr); 
   // image(flipIr,1920-512,0); //Display Mirrored IR Image
-  
   invIr = ir.copy(); //Make another copy of IR image
   // invIr.filter(INVERT); //Invert the IR image
-
   contours = getContoursFromIR(invIr);
 
   contPoints = getPointsFromContours(contours);
@@ -147,13 +134,8 @@ void draw() {
       // vertex(t.p2.x, t.p2.y);
       // vertex(t.p3.x, t.p3.y);
     }
-  }
-
-  
+  } 
 }
-
-
-
 
 // all functions below used to generate depthMapRealWorld point cloud
 PVector[] depthMapRealWorld() {
@@ -210,15 +192,11 @@ ArrayList<Contour> getContoursFromIR(PImage IRImage) {
   float threshVal = 0.825;
   IRImage.filter(THRESHOLD,threshVal);
   IRImage.loadPixels();
-  
-  cleanBoundsOfImage(IRImage,152,392,130,258); //shit confused me with mirroring
-  
+  cleanBoundsOfImage(IRImage,152,392,130,258); //confused me with mirroring
   // image(IRImage,513,0);
   stroke(0,255,0);
   noFill();
   // rect(1920-512+120,130,360-120,258-130); //drawing rectangle over ir image of processed area
-  
-
   IRImage.updatePixels();
   opencv.loadImage(IRImage);
   ArrayList<Contour> allContours = opencv.findContours();
@@ -257,7 +235,8 @@ void mousePressed(){
   print("x:" + mouseX);
   print("y:" + mouseY);
 }
-// threshVal = map(mouseY,1080,0,0,1); //This was for identifyinga threshold to use
+
+// threshVal = map(mouseY,1080,0,0,1); //This was for identifying a threshold to use
 
 ArrayList<PVector> getPointsFromContours(ArrayList<Contour> contours) {
   float contArea = 0;
@@ -292,7 +271,6 @@ void addStartPoints(ArrayList<PVector> contPoints) {
   contPoints.add(testPoint);
   testPoint = new PVector(1920,1080);
   contPoints.add(testPoint);
-
   testPoint = new PVector(0,1080/2);
   contPoints.add(testPoint);
   testPoint = new PVector(1920/2,0);
@@ -301,7 +279,6 @@ void addStartPoints(ArrayList<PVector> contPoints) {
   contPoints.add(testPoint);
   testPoint = new PVector(1920/2,1080);
   contPoints.add(testPoint);
-
 }
 
 int getNumFreqBands(int numTriangles) {
