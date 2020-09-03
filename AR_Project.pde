@@ -75,13 +75,10 @@ void draw() {
   invIr = ir.copy(); //Make another copy of IR image
   // invIr.filter(INVERT); //Invert the IR image
   contours = getContoursFromIR(invIr);
-
   contPoints = getPointsFromContours(contours);
   addStartPoints(contPoints);
   stroke(0,255,0);
-  // fill(0,255,0);
   noFill();
-
   if(contPoints.size() > 4) {
     triangles = Triangulate.triangulate(contPoints);
     fft.analyze(spectrum);
@@ -97,13 +94,10 @@ void draw() {
     else {
       skipBands = false;
     }
-    // print(bands % triangles.size() + "\n");
-    // int rectSpace = 1920 / triangles.size(); //for doing those sound bars...
     for (int i = 0; i < triangles.size(); i++) {
       Triangle t = (Triangle)triangles.get(i);
       //Get sum of freqs over intervals
       float sumFill = 0;
-      
       for (int b = i * bandFactor; b < (i+1) * bandFactor; b++) {
         if(skipBands && i == triangles.size() - 1) {
           sumFill = sumFill + spectrumb[b + bandsToSkip];
@@ -111,14 +105,7 @@ void draw() {
         else {
           sumFill = sumFill + spectrumb[b];
         }
-        
       }
-      // push();
-      // noStroke();
-      // fill(0,50,100);
-      // float rectY = map(sumFill,0,1,1080,0);
-      // rect(i*rectSpace,rectY,rectSpace,1080-rectY);
-      // pop();
       push();
       stroke(0,255,0);
       // float fillness = spectrum[i*bandFactor] * 255;
